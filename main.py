@@ -11,9 +11,9 @@ angle = 45 #degrees
 
 #GUI
 layout = [[gui.Text("Input original data's path")],
-          [gui.Input(key = 'original_data')],
+          [gui.Input(key = 'original_data',default_text = r"sample_musics\\akinoayumi.mp3")],
           [gui.Text("Input noise data's path")],
-          [gui.Input(key = 'noise_data')],
+          [gui.Input(key = 'noise_data', default_text = 'sample_musics\elegy.mp3')],
           [gui.Button('Run')]]
 
 window = gui.Window("beamforming test",layout)
@@ -27,7 +27,7 @@ while True:
         original_path = values['original_data']
         noise_data, noise_rate = lib.load(noise_path)
         original_data, original_rate = lib.load(original_path)
-
+        
         #データ長調整
         if len(noise_data) < len(original_data):
             noise_data = np.pad(noise_data,(0,int(len(original_data) - len(noise_data))),mode = 'constant')
@@ -36,10 +36,28 @@ while True:
 
         data_length = len(original_data)
 
+
         if data_length % 2 != 0:
             noise_data = np.append(noise_data,0.0)
-            original_data = np.append(original_data,0,0)
+            original_data = np.append(original_data,0.0)
             data_length = data_length + 1
+
+
+
+        #debug
+        #for i in range(len(original_data)):
+            #highest = 0
+            #index = 0
+
+            #if original_data[i] > highest:
+                #highest = original_data[i]
+                #index = i
+
+        #print(highest)
+        #print(index)
+        ####結果####
+        #2.739009e-07
+        #2845439
 
         #マイクロホンアレイ生成
         mic_array = np.zeros((mic_num, data_length),dtype="float64")
