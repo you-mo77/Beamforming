@@ -7,13 +7,15 @@ import PySimpleGUI as gui
 mic_num = 30
 mic_dis = 5e-3
 sound_speed = 340
-angle = 45 #degrees
+angle = 0 #degrees
 
 #GUI
 layout = [[gui.Text("Input original data's path")],
           [gui.Input(key = 'original_data',default_text = r"sample_musics\\akinoayumi.mp3")],
           [gui.Text("Input noise data's path")],
-          [gui.Input(key = 'noise_data', default_text = 'sample_musics\elegy.mp3')],
+          [gui.Input(key = 'noise_data', default_text = 'sample_musics\砂嵐の音・テレビのホワイトノイズ音.mp3')],
+          [gui.Text("Input noise's angles[deg]")],
+          [gui.Input(key = 'angle',default_text = '0')],
           [gui.Button('Run')]]
 
 window = gui.Window("beamforming test",layout)
@@ -36,43 +38,19 @@ while True:
 
         data_length = len(original_data)
 
-
         if data_length % 2 != 0:
             noise_data = np.append(noise_data,0.0)
             original_data = np.append(original_data,0.0)
             data_length = data_length + 1
 
-
-
-        #debug
-        #for i in range(len(original_data)):
-            #highest = 0
-            #index = 0
-
-            #if original_data[i] > highest:
-                #highest = original_data[i]
-                #index = i
-
-        #print(highest)
-        #print(index)
-        ####結果####
-        #2.739009e-07
-        #2845439
-
-
-
         #マイクロホンアレイ生成
         mic_array = np.zeros((mic_num, data_length),dtype="float64")
 
-
-
         #到達音声代入(遅延込み雑音と対象音声代入)
+        angle = float(values['angle'])
         for i in range(mic_num):
             delaied_time = i * mic_dis * np.sin(angle * (np.pi / 180)) / sound_speed
             delaied_sample = noise_rate * delaied_time
-
-        #print(delaied_time)
-        #print(delaied_sample)
 
             mic_array[i] = original_data + np.roll(noise_data,int(delaied_sample))
 
