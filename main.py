@@ -59,15 +59,22 @@ while True:
         #2.739009e-07
         #2845439
 
+
+
         #マイクロホンアレイ生成
         mic_array = np.zeros((mic_num, data_length),dtype="float64")
+
+
 
         #到達音声代入(遅延込み雑音と対象音声代入)
         for i in range(mic_num):
             delaied_time = i * mic_dis * np.sin(angle * (np.pi / 180)) / sound_speed
             delaied_sample = noise_rate * delaied_time
 
-        mic_array[i] = original_data + np.roll(noise_data,int(delaied_sample))
+        #print(delaied_time)
+        #print(delaied_sample)
+
+            mic_array[i] = original_data + np.roll(noise_data,int(delaied_sample))
 
         #マイク0に到達した音(遅延なしの雑音が入った音)
         sf.write("mic0_sound.wav",mic_array[0],original_rate)
